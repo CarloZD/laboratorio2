@@ -4,8 +4,254 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Carlos Ruiz — Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --accent: #c8f060;
+      --accent2: #60c8f0;
+      --text: #e8e8e0;
+      --muted: #777;
+      --font-display: 'Lato', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.35;
+    }
+
+    /* ─── GRID BACKGROUND ─── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.1s;
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 3px 10px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: var(--accent);
+      display: block;
+    }
+
+    .bio {
+      max-width: 540px;
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.85;
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 60px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    section:nth-child(2) { animation-delay: 0.25s; }
+    section:nth-child(3) { animation-delay: 0.4s; }
+    section:nth-child(4) { animation-delay: 0.55s; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── SKILLS GRID ─── */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 7px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      cursor: default;
+    }
+
+    .skill-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(200, 240, 96, 0.05);
+    }
+
+    /* ─── PROJECTS ─── */
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .project-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: default;
+    }
+
+    .project-item:last-child { border-bottom: none; }
+
+    .project-num {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 400;
+      min-width: 28px;
+      padding-top: 2px;
+    }
+
+    .project-info { flex: 1; }
+
+    .project-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .project-desc {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .project-arrow {
+      color: var(--border);
+      font-size: 18px;
+      padding-top: 2px;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .project-item:hover .project-arrow {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 40px 0 60px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.7s;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: #444;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 540px) {
+      h1 { font-size: 1.6rem; }
+      .project-item { flex-wrap: wrap; }
+    }
+  </style>
 </head>
 <body>
 
@@ -15,7 +261,7 @@
 
   <!-- HEADER -->
   <header>
-    <div class="tag">Portafolio · 2025</div>
+    <div class="tag">Portafolio · 2026</div>
     <h1>Carlos Enrique<span>Ruiz Llanterhuay.</span></h1>
     <p class="bio">Estudiante de Diseño y Desarrollo de Software con interés en aplicaciones web y de escritorio. Me enfoco en crear soluciones prácticas y eficientes que respondan a necesidades reales, aplicando buenas prácticas de programación y diseño de sistemas.</p>
   </header>
@@ -53,8 +299,8 @@
       <div class="project-item">
         <div class="project-num">02</div>
         <div class="project-info">
-          <div class="project-name">Platarforma de compra de videojuegos NEXUS</div>
-          <div class="project-desc">Una plataforma virtual donde los usuarios puedan interactuar y comprar sus videojuegos favoritos.</div>
+          <div class="project-name">Gestión de Conferencias Web</div>
+          <div class="project-desc">Plataforma web para organizar conferencias, registro de ponentes y gestión de asistentes.</div>
         </div>
         <div class="project-arrow">→</div>
       </div>
